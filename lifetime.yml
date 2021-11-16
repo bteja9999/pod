@@ -1,16 +1,9 @@
-apiVersion: kyverno.io/v1
-kind: ClusterPolicy
+apiVersion: apps/v1
+kind: pod
 metadata:
   name: pod-lifetime
   annotations:
-    policies.kyverno.io/title: Enforce pod duration
-    policies.kyverno.io/category: Sample
-    policies.kyverno.io/minversion: 1.4.2
-    policies.kyverno.io/subject: Pod
-    policies.kyverno.io/description: >-
-      This validation is valuable when annotations are used to define durations,
-      such as to ensure a Pod lifetime annotation does not exceed some site specific max threshold.
-      Pod lifetime annotation can be no greater than 8 hours.
+    pod.kubernetes.io/lifetime: 300s 
 spec:
   validationFailureAction: audit
   background: true
@@ -21,9 +14,9 @@ spec:
         kinds:
         - Pod
     validate:
-      message: "Pod lifetime exceeds limit of 8h"
+      message: "Pod lifetime exceeds limit of 300s"
       deny:
         conditions:
         - key: "{{ request.object.metadata.annotations.\"pod.kubernetes.io/lifetime\" }}"
           operator: GreaterThan
-          value: "8h"
+          value: "300s"
