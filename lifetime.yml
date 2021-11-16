@@ -1,22 +1,14 @@
 apiVersion: v1
-kind: pod
+kind: Pod
 metadata:
-  name: pod-lifetime
-  annotations:
-    pod.kubernetes.io/lifetime: 300s 
+  name: frontend
+  annotations:pod.kubernetes.io/lifetime: 300s
 spec:
-  validationFailureAction: audit
-  background: true
-  rules:
-  - name: pods-lifetime
-    match:
-      resources:
-        kinds:
-        - Pod
-    validate:
-      message: "Pod lifetime exceeds limit of 300s"
-      deny:
-        conditions:
-        - key: "{{ request.object.metadata.annotations.\"pod.kubernetes.io/lifetime\" }}"
-          operator: GreaterThan
-          value: "300s"
+  containers:
+  - name: nginx
+    image: nginx
+    resources:
+      requests:
+        memory: "64Mi"
+      limits:
+        memory: "128Mi"
